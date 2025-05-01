@@ -165,4 +165,43 @@ Dieser Fehler tritt auf, wenn das Modul `feedparser` nicht installiert ist.
   pip install feedparser
   ```
 
-Weitere Module wie `flask`, `requests` und `beautifulsoup4` werden ebenfalls benötigt und sind in der `requirements.txt` enthalten. 
+Weitere Module wie `flask`, `requests` und `beautifulsoup4` werden ebenfalls benötigt und sind in der `requirements.txt` enthalten.
+
+### Fehler: Modul weiterhin nicht gefunden
+
+Falls trotz Installation das Modul weiterhin nicht gefunden wird, prüfe Folgendes:
+
+1. **Virtuelle Umgebung aktivieren (falls verwendet):**
+   ```bash
+   source venv/bin/activate
+   ```
+   Danach erneut installieren:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Richtiges Python und pip verwenden:**
+   Prüfe, ob du das Python und pip aus der venv nutzt:
+   ```bash
+   which python
+   which pip
+   ```
+   Beide Pfade sollten auf die virtuelle Umgebung zeigen (z.B. `/home/pi/RSS-Reader/venv/bin/python`).
+
+3. **Modul global installieren (wenn keine venv genutzt wird):**
+   ```bash
+   pip install feedparser
+   # oder, falls mehrere Python-Versionen installiert sind:
+   python3 -m pip install feedparser
+   ```
+
+4. **Installation überprüfen:**
+   ```bash
+   pip show feedparser
+   ```
+   Wenn keine Ausgabe erscheint, ist das Modul nicht installiert.
+
+5. **Programm starten:**
+   ```bash
+   python app.py
+   ``` 
