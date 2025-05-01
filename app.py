@@ -26,6 +26,25 @@ HTML_TEMPLATE = '''
         .summary { color: #444; }
         .feed-title { margin-top: 2rem; margin-bottom: 2rem; }
         .footer { text-align: center; color: #888; margin-top: 3rem; font-size: 0.95em; }
+        #scrollTopBtn {
+            display: none;
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            z-index: 99;
+            border: none;
+            outline: none;
+            background-color: #0d6efd;
+            color: white;
+            cursor: pointer;
+            padding: 12px 18px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        #scrollTopBtn:hover {
+            background-color: #0b5ed7;
+        }
     </style>
 </head>
 <body>
@@ -56,7 +75,22 @@ HTML_TEMPLATE = '''
             <span>RSS Reader & Zusammenfasser &copy; {{ 2024 }}</span>
         </div>
     </div>
+    <button onclick="scrollToTop()" id="scrollTopBtn" title="Nach oben">&#8679;</button>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Scroll-to-Top Button
+        const scrollBtn = document.getElementById('scrollTopBtn');
+        window.onscroll = function() {
+            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+                scrollBtn.style.display = 'block';
+            } else {
+                scrollBtn.style.display = 'none';
+            }
+        };
+        function scrollToTop() {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+    </script>
 </body>
 </html>
 '''
