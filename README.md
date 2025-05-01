@@ -7,6 +7,17 @@ Dieses Projekt ist ein einfacher RSS-Reader mit Web-Oberfläche, der RSS-Feeds a
 - Automatische Zusammenfassung der Feed-Inhalte
 - Einfache, moderne Web-Oberfläche (Flask-basiert)
 
+## Favoritenfunktion
+
+Ab sofort kannst du bis zu 5 RSS-Quellen als Favoriten speichern und bequem zwischen ihnen wechseln:
+
+- Über das Dropdown-Menü kannst du gespeicherte Favoriten direkt auswählen und laden.
+- Mit dem Stern-Button neben dem URL-Feld kannst du die aktuelle Feed-URL als Favorit speichern oder wieder entfernen.
+- Die Favoriten werden dauerhaft in der Datei `favorites.json` gespeichert.
+- Die Favoritenfunktion benötigt keine zusätzlichen Python-Module.
+
+**Tipp:** Die Favoriten sind sofort nach dem Hinzufügen/Entfernen im Dropdown-Menü verfügbar.
+
 ## Installation und Betrieb auf einem Server (z.B. Raspberry Pi)
 
 ### Voraussetzungen
@@ -207,7 +218,8 @@ Falls trotz Installation das Modul weiterhin nicht gefunden wird, prüfe Folgend
    ```
 
 **Neu:**
-- Der Reader zeigt jetzt zu jedem Feed-Eintrag ein Vorschaubild an, sofern dieses im Feed vorhanden ist (z.B. als media:content, enclosure oder Bild im Text). 
+- Der Reader zeigt jetzt zu jedem Feed-Eintrag ein Vorschaubild an, sofern dieses im Feed vorhanden ist (z.B. als media:content, enclosure oder Bild im Text).
+- **Favoritenfunktion:** RSS-Quellen können als Favoriten gespeichert und über ein Dropdown-Menü schnell ausgewählt werden.
 
 **Tipp:**
 - Wenn im Feed kein Bild enthalten ist, versucht der Reader automatisch, ein Vorschaubild von der verlinkten Webseite (OpenGraph oder Twitter-Card) zu extrahieren. Dadurch werden auch bei vielen Nachrichten-Feeds passende Bilder angezeigt. Das Laden kann dadurch etwas langsamer werden. 
