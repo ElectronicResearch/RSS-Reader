@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import feedparser
 from flask import Flask, render_template_string, request
 import requests
