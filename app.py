@@ -4,6 +4,7 @@ import feedparser
 from flask import Flask, render_template_string, request
 import requests
 from bs4 import BeautifulSoup
+import time
 
 app = Flask(__name__)
 
@@ -99,7 +100,25 @@ def extract_image(entry):
     img = soup.find('img')
     if img and img.get('src'):
         return img['src']
-    # 5. Fallback: Platzhalterbild
+    # 5. OpenGraph/Twitter-Card von verlinkter Seite
+    link = entry.get('link')
+    if link:
+        try:
+            resp = requests.get(link, timeout=5, headers={"User-Agent": "Mozilla/5.0"})
+            if resp.status_code == 200:
+                page = BeautifulSoup(resp.text, 'html.parser')
+                # OpenGraph
+                og = page.find('meta', property='og:image')
+                if og and og.get('content'):
+                    return og['content']
+                # Twitter Card
+                tw = page.find('meta', attrs={'name': 'twitter:image'})
+                if tw and tw.get('content'):
+                    return tw['content']
+        except Exception as e:
+            print(f"DEBUG: Fehler beim Parsen von {link}: {e}")
+            pass
+    # 6. Fallback: Platzhalterbild
     return 'https://via.placeholder.com/120x80?text=Kein+Bild'
 
 @app.route('/', methods=['GET'])
@@ -114,6 +133,7 @@ def index():
             for entry in feed.entries:
                 summary = summarize(entry.get('summary', entry.get('description', '')))
                 image = extract_image(entry)
+                print(f"DEBUG: {entry.get('title', 'Kein Titel')} -> Bild: {image}")
                 entries.append({
                     'title': entry.get('title', 'Kein Titel'),
                     'link': entry.get('link', '#'),
