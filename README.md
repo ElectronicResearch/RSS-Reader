@@ -143,4 +143,26 @@ pip install -r requirements.txt
 Falls du das Paket einzeln installieren möchtest:
 ```bash
 pip install requests
-``` 
+```
+
+## Fehlerbehebung (Troubleshooting)
+
+### Fehler: ImportError: No module named feedparser
+
+Dieser Fehler tritt auf, wenn das Modul `feedparser` nicht installiert ist.
+
+**Lösung:**
+- Stelle sicher, dass du alle Abhängigkeiten installiert hast:
+  ```bash
+  pip install -r requirements.txt
+  ```
+- Falls du eine virtuelle Umgebung verwendest, aktiviere sie vorher:
+  ```bash
+  source venv/bin/activate
+  ```
+- Alternativ kannst du das Modul einzeln installieren:
+  ```bash
+  pip install feedparser
+  ```
+
+Weitere Module wie `flask`, `requests` und `beautifulsoup4` werden ebenfalls benötigt und sind in der `requirements.txt` enthalten. 
