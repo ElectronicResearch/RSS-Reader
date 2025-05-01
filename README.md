@@ -208,3 +208,6 @@ Falls trotz Installation das Modul weiterhin nicht gefunden wird, prüfe Folgend
 
 **Neu:**
 - Der Reader zeigt jetzt zu jedem Feed-Eintrag ein Vorschaubild an, sofern dieses im Feed vorhanden ist (z.B. als media:content, enclosure oder Bild im Text). 
+
+**Tipp:**
+- Wenn im Feed kein Bild enthalten ist, versucht der Reader automatisch, ein Vorschaubild von der verlinkten Webseite (OpenGraph oder Twitter-Card) zu extrahieren. Dadurch werden auch bei vielen Nachrichten-Feeds passende Bilder angezeigt. Das Laden kann dadurch etwas langsamer werden. 
