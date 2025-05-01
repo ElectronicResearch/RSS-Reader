@@ -66,6 +66,45 @@ Dieses Projekt ist ein einfacher RSS-Reader mit Web-Oberfläche, der RSS-Feeds a
 
 Damit kannst du den RSS-Reader einfach im lokalen Netzwerk oder – mit weiteren Schritten – auch im Internet bereitstellen.
 
+## Automatischer Start beim Systemneustart (z.B. Raspberry Pi)
+
+Um den RSS-Reader automatisch beim Hochfahren des Systems zu starten, empfiehlt sich ein systemd-Service.
+
+### Beispiel: systemd-Service einrichten
+
+1. **Service-Datei erstellen**
+   Erstelle die Datei `/etc/systemd/system/rssreader.service` mit folgendem Inhalt (Pfad ggf. anpassen!):
+   ```ini
+   [Unit]
+   Description=RSS Reader Flask App
+   After=network.target
+
+   [Service]
+   User=pi
+   WorkingDirectory=/home/pi/RSS-Reader
+   ExecStart=/home/pi/RSS-Reader/venv/bin/python app.py
+   Restart=always
+   Environment=PYTHONUNBUFFERED=1
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+   **Hinweis:** Passe `User` und `WorkingDirectory` ggf. an deinen Benutzernamen und Installationspfad an!
+
+2. **Service aktivieren und starten**
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl enable rssreader.service
+   sudo systemctl start rssreader.service
+   ```
+
+3. **Status prüfen**
+   ```bash
+   sudo systemctl status rssreader.service
+   ```
+
+Jetzt startet der RSS-Reader automatisch bei jedem Neustart des Raspberry Pi bzw. Servers.
+
 ## Nutzung
 1. Anwendung starten:
    ```bash
