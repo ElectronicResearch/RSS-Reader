@@ -132,3 +132,15 @@ Jetzt startet der RSS-Reader automatisch bei jedem Neustart des Raspberry Pi bzw
 
 ## Lizenz
 MIT 
+
+**Hinweis:**
+Das Modul `requests` wird für die Anwendung benötigt und ist jetzt in der `requirements.txt` enthalten. Stelle sicher, dass du alle Abhängigkeiten mit folgendem Befehl installierst:
+
+```bash
+pip install -r requirements.txt
+```
+
+Falls du das Paket einzeln installieren möchtest:
+```bash
+pip install requests
+``` 
