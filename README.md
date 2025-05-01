@@ -204,4 +204,7 @@ Falls trotz Installation das Modul weiterhin nicht gefunden wird, prüfe Folgend
 5. **Programm starten:**
    ```bash
    python app.py
-   ``` 
+   ```
+
+**Neu:**
+- Der Reader zeigt jetzt zu jedem Feed-Eintrag ein Vorschaubild an, sofern dieses im Feed vorhanden ist (z.B. als media:content, enclosure oder Bild im Text). 
