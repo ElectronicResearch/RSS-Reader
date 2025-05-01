@@ -1,12 +1,27 @@
 # -*- coding: utf-8 -*-
 
 import feedparser
-from flask import Flask, render_template_string, request
+from flask import Flask, render_template_string, request, jsonify
 import requests
 from bs4 import BeautifulSoup
 import time
+import json
+import os
 
 app = Flask(__name__)
+
+# Laden der Favoriten
+def load_favorites():
+    try:
+        with open('favorites.json', 'r') as f:
+            return json.load(f)['favorites']
+    except:
+        return []
+
+# Speichern der Favoriten
+def save_favorites(favorites):
+    with open('favorites.json', 'w') as f:
+        json.dump({'favorites': favorites}, f)
 
 HTML_TEMPLATE = '''
 <!doctype html>
@@ -45,6 +60,9 @@ HTML_TEMPLATE = '''
         #scrollTopBtn:hover {
             background-color: #0b5ed7;
         }
+        .favorite-btn {
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -52,8 +70,21 @@ HTML_TEMPLATE = '''
         <h1 class="text-center mb-4">RSS Reader & Zusammenfasser</h1>
         <form method="get" class="mb-4">
             <div class="input-group">
-                <input type="text" class="form-control" name="url" placeholder="RSS Feed URL" value="{{ url }}" required>
+                <select class="form-select" id="favoriteSelect" onchange="loadFavorite()">
+                    <option value="">Favoriten auswählen...</option>
+                    {% for fav in favorites %}
+                        <option value="{{ fav }}" {% if url == fav %}selected{% endif %}>{{ fav }}</option>
+                    {% endfor %}
+                </select>
+                <input type="text" class="form-control" name="url" id="urlInput" placeholder="RSS Feed URL" value="{{ url }}" required>
                 <button class="btn btn-primary" type="submit">Feed laden</button>
+                <button type="button" class="btn btn-outline-primary favorite-btn" onclick="toggleFavorite()">
+                    {% if url in favorites %}
+                        ★ Entfernen
+                    {% else %}
+                        ☆ Favorisieren
+                    {% endif %}
+                </button>
             </div>
         </form>
         {% if entries %}
@@ -89,6 +120,34 @@ HTML_TEMPLATE = '''
         };
         function scrollToTop() {
             window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function loadFavorite() {
+            const select = document.getElementById('favoriteSelect');
+            const urlInput = document.getElementById('urlInput');
+            if (select.value) {
+                urlInput.value = select.value;
+                document.querySelector('form').submit();
+            }
+        }
+
+        function toggleFavorite() {
+            const url = document.getElementById('urlInput').value;
+            if (!url) return;
+
+            fetch('/toggle_favorite', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({url: url})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
         }
     </script>
 </body>
@@ -160,6 +219,8 @@ def index():
     url = request.args.get('url', '')
     entries = []
     feed_title = ''
+    favorites = load_favorites()
+    
     if url:
         try:
             feed = feedparser.parse(url)
@@ -175,7 +236,29 @@ def index():
                 })
         except Exception as e:
             entries = []
-    return render_template_string(HTML_TEMPLATE, entries=entries, url=url, feed_title=feed_title)
+    
+    return render_template_string(HTML_TEMPLATE, 
+        entries=entries, 
+        url=url, 
+        feed_title=feed_title,
+        favorites=favorites
+    )
+
+@app.route('/toggle_favorite', methods=['POST'])
+def toggle_favorite():
+    data = request.get_json()
+    url = data.get('url')
+    if not url:
+        return jsonify({'success': False, 'error': 'No URL provided'})
+    
+    favorites = load_favorites()
+    if url in favorites:
+        favorites.remove(url)
+    else:
+        favorites.append(url)
+    
+    save_favorites(favorites)
+    return jsonify({'success': True})
 
 if __name__ == '__main__':
     app.run(debug=True) 
