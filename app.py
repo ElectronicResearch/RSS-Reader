@@ -133,7 +133,6 @@ def index():
             for entry in feed.entries:
                 summary = summarize(entry.get('summary', entry.get('description', '')))
                 image = extract_image(entry)
-                print(f"DEBUG: {entry.get('title', 'Kein Titel')} -> Bild: {image}")
                 entries.append({
                     'title': entry.get('title', 'Kein Titel'),
                     'link': entry.get('link', '#'),
