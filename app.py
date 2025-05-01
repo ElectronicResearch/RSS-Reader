@@ -18,9 +18,9 @@ HTML_TEMPLATE = '''
     <style>
         body { background: #f8f9fa; }
         .container { max-width: 800px; margin-top: 40px; }
-        .feed-item { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 1.5rem; margin-bottom: 1.5rem; display: flex; gap: 1.5rem; }
-        .feed-item-img { max-width: 180px; max-height: 120px; object-fit: cover; border-radius: 6px; }
-        .feed-item-content { flex: 1; }
+        .feed-item { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 1.5rem; }
+        .feed-item-img { width: 120px; height: 80px; object-fit: cover; border-radius: 6px; flex-shrink: 0; background: #eee; }
+        .feed-item-content { flex: 1; min-width: 0; }
         .feed-item h3 { margin-top: 0; }
         .summary { color: #444; }
         .feed-title { margin-top: 2rem; margin-bottom: 2rem; }
@@ -40,9 +40,7 @@ HTML_TEMPLATE = '''
             <h2 class="feed-title text-center">Feed: {{ feed_title }}</h2>
             {% for entry in entries %}
                 <div class="feed-item">
-                    {% if entry.image %}
-                        <img src="{{ entry.image }}" class="feed-item-img" alt="Vorschaubild">
-                    {% endif %}
+                    <img src="{{ entry.image }}" class="feed-item-img" alt="Vorschaubild">
                     <div class="feed-item-content">
                         <h3><a href="{{ entry.link }}" target="_blank">{{ entry.title }}</a></h3>
                         <div class="summary">{{ entry.summary }}</div>
@@ -90,13 +88,19 @@ def extract_image(entry):
         for enc in enclosure:
             if enc.get('type', '').startswith('image/'):
                 return enc.get('href')
-    # 3. Erstes <img> im summary/description
+    # 3. image Feld direkt
+    if 'image' in entry and isinstance(entry['image'], dict):
+        url = entry['image'].get('href') or entry['image'].get('url')
+        if url:
+            return url
+    # 4. Erstes <img> im summary/description
     html = entry.get('summary', entry.get('description', ''))
     soup = BeautifulSoup(html, 'html.parser')
     img = soup.find('img')
     if img and img.get('src'):
         return img['src']
-    return None
+    # 5. Fallback: Platzhalterbild
+    return 'https://via.placeholder.com/120x80?text=Kein+Bild'
 
 @app.route('/', methods=['GET'])
 def index():
