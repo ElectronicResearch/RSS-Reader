@@ -106,6 +106,15 @@ HTML_TEMPLATE = '''
             z-index: 2000;
             margin: 12px 12px 0 0;
         }
+        /* Kompakte Buttons und Felder im mobilen Offcanvas-Menü */
+        #mobileMenu .btn, #mobileMenu .form-control {
+            min-height: 36px !important;
+            font-size: 1em !important;
+            padding: 0.25rem 0.75rem !important;
+        }
+        #mobileMenu .favorite-btn {
+            min-width: 36px !important;
+        }
         .start-bg {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -152,15 +161,11 @@ HTML_TEMPLATE = '''
           </div>
           <div class="offcanvas-body">
             <form method="get" class="mb-3">
-              <div class="input-group">
+              <div class="input-group gap-2">
                 <input type="text" class="form-control" name="url" id="mobileUrlInput" placeholder="Feed-Adresse" required>
-                <button class="btn btn-primary" type="submit">Feed laden</button>
-                <button type="button" class="btn btn-outline-primary favorite-btn ms-2" onclick="toggleFavoriteMobile()">
-                    {% if url in favorites %}
-                        ★
-                    {% else %}
-                        ☆
-                    {% endif %}
+                <button class="btn btn-primary btn-sm" type="submit">Laden</button>
+                <button type="button" class="btn btn-outline-primary btn-sm favorite-btn" style="font-size:1.25em;" onclick="toggleFavoriteMobile()">
+                    {% if url in favorites %}★{% else %}☆{% endif %}
                 </button>
               </div>
             </form>
