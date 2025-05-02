@@ -179,7 +179,7 @@ HTML_TEMPLATE = '''
         </div>
         <form method="get" class="mb-4 main-form-row" id="mainForm">
             <div class="input-group flex-column flex-sm-row">
-                <select class="form-select mb-2 mb-sm-0" id="favoriteSelect">
+                <select class="form-select mb-2 mb-sm-0" id="favoriteSelect" name="favorite">
                     <option value="">Favoriten auswählen...</option>
                     {% for fav in favorites %}
                         <option value="{{ fav }}" {% if url == fav %}selected{% endif %}>{{ fav }}</option>
@@ -288,9 +288,20 @@ HTML_TEMPLATE = '''
         }
 
         document.getElementById('favoriteSelect').addEventListener('change', loadFavorite);
+
+        // Footer ausblenden, wenn Offcanvas-Menü offen ist
+        const offcanvas = document.getElementById('mobileMenu');
+        if (offcanvas) {
+            offcanvas.addEventListener('show.bs.offcanvas', function() {
+                document.getElementById('mainFooter').style.display = 'none';
+            });
+            offcanvas.addEventListener('hidden.bs.offcanvas', function() {
+                document.getElementById('mainFooter').style.display = '';
+            });
+        }
     </script>
     <!-- Sticky Footer -->
-    <footer class="footer" style="position:fixed;left:0;bottom:0;width:100vw;background:rgba(248,249,250,0.95);text-align:center;color:#888;padding:0.7rem 0;z-index:3000;box-shadow:0 -2px 8px rgba(0,0,0,0.04);font-size:0.98em;">
+    <footer class="footer" id="mainFooter" style="position:fixed;left:0;bottom:0;width:100vw;background:rgba(248,249,250,0.95);text-align:center;color:#888;padding:0.7rem 0;z-index:3000;box-shadow:0 -2px 8px rgba(0,0,0,0.04);font-size:0.98em;">
         <span>FeedSense &copy; M. Koznjak 2025</span>
     </footer>
 </body>
