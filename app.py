@@ -75,8 +75,9 @@ HTML_TEMPLATE = '''
             .container { padding: 0 2px; }
             .feed-item { flex-direction: column; align-items: stretch; padding: 1rem; gap: 0.7rem; }
             .feed-item-img { width: 100%; height: 120px; margin-bottom: 0.5rem; }
-            .input-group > * { font-size: 1rem; }
-            .btn, .form-control, .form-select { min-height: 48px; font-size: 1.05rem; }
+            .input-group { flex-direction: column !important; gap: 0.5rem; }
+            .input-group > * { width: 100% !important; font-size: 1rem; }
+            .btn, .form-control, .form-select { min-height: 44px; font-size: 1.05rem; }
             .favorite-btn { min-width: 44px; }
             .footer { font-size: 0.9em; }
         }
@@ -96,16 +97,16 @@ HTML_TEMPLATE = '''
     <div class="container">
         <h1 class="text-center mb-4">FeedSense</h1>
         <form method="get" class="mb-4">
-            <div class="input-group">
-                <select class="form-select" id="favoriteSelect" onchange="loadFavorite()">
+            <div class="input-group flex-column flex-sm-row">
+                <select class="form-select mb-2 mb-sm-0" id="favoriteSelect" onchange="loadFavorite()">
                     <option value="">Favoriten auswählen...</option>
                     {% for fav in favorites %}
                         <option value="{{ fav }}" {% if url == fav %}selected{% endif %}>{{ fav }}</option>
                     {% endfor %}
                 </select>
-                <input type="text" class="form-control" name="url" id="urlInput" placeholder="RSS Feed URL" value="{{ url }}" required>
-                <button class="btn btn-primary" type="submit">Feed laden</button>
-                <button type="button" class="btn btn-outline-primary favorite-btn" onclick="toggleFavorite()">
+                <input type="text" class="form-control mb-2 mb-sm-0" name="url" id="urlInput" placeholder="Feed-Adresse" value="{{ url }}" required style="min-width:0;">
+                <button class="btn btn-primary mb-2 mb-sm-0" type="submit">Feed laden</button>
+                <button type="button" class="btn btn-outline-primary favorite-btn mb-2 mb-sm-0" onclick="toggleFavorite()">
                     {% if url in favorites %}
                         ★ Entfernen
                     {% else %}
@@ -114,6 +115,11 @@ HTML_TEMPLATE = '''
                 </button>
             </div>
         </form>
+        {% if entries and is_mobile %}
+            <div class="d-flex justify-content-end mb-3">
+                <a href="/" class="btn btn-secondary btn-lg w-100">Fertig</a>
+            </div>
+        {% endif %}
         {% if entries %}
             <h2 class="feed-title text-center">Feed: {{ feed_title }}</h2>
             {% for entry in entries %}
