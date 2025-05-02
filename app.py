@@ -194,8 +194,8 @@ HTML_TEMPLATE = '''
         </form>
         {% if not entries and not url %}
             <div class="start-bg"></div>
-            <div class="position-absolute top-50 start-50 translate-middle text-center" style="z-index:1; width:100vw;">
-                <h2 style="color:#fff; font-weight:600; text-shadow:0 2px 12px #222, 0 1px 0 #444; font-size:2.1rem; letter-spacing:0.01em;">FeedSense liest mit – damit Sie es nicht müssen.</h2>
+            <div style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+                <h2 style="color:#fff; font-weight:600; text-shadow:0 2px 12px #222, 0 1px 0 #444; font-size:2.1rem; letter-spacing:0.01em; text-align:center; width:100vw;">FeedSense liest mit – damit Sie es nicht müssen.</h2>
             </div>
         {% endif %}
         {% if entries %}
