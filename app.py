@@ -63,8 +63,9 @@ HTML_TEMPLATE = '''
     <link rel="icon" type="image/png" sizes="192x192" href="/static/icon-192.png">
     <link rel="apple-touch-icon" href="/static/icon-192.png">
     <meta name="theme-color" content="#0d6efd">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body { background: #f8f9fa; }
+        body { background: #f8f9fa; font-family: 'Inter', system-ui, Arial, Helvetica, sans-serif; }
         .container { max-width: 800px; margin-top: 40px; }
         .feed-item { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 1.5rem; }
         .feed-item-img { width: 120px; height: 80px; object-fit: cover; border-radius: 6px; flex-shrink: 0; background: #eee; }
@@ -193,6 +194,9 @@ HTML_TEMPLATE = '''
         </form>
         {% if not entries and not url %}
             <div class="start-bg"></div>
+            <div class="position-absolute top-50 start-50 translate-middle text-center" style="z-index:1; width:100vw;">
+                <h2 style="color:#222; font-weight:600; text-shadow:0 2px 8px #fff, 0 1px 0 #eee; font-size:2.1rem; letter-spacing:0.01em;">FeedSense liest mit – damit Sie es nicht müssen.</h2>
+            </div>
         {% endif %}
         {% if entries %}
             <h2 class="feed-title text-center">Feed: {{ feed_title }}</h2>
