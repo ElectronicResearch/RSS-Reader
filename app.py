@@ -98,8 +98,12 @@ HTML_TEMPLATE = '''
     <div class="container">
         <h1 class="text-center mb-4">FeedSense</h1>
         <!-- Hamburger-Button nur auf Mobilgeräten -->
-        <button class="navbar-toggler d-block d-sm-none position-absolute end-0 mt-2 me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu" style="z-index:1051;">
-            <span class="navbar-toggler-icon"></span>
+        <button class="d-block d-sm-none position-absolute end-0 mt-2 me-2 btn btn-light border" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu" style="z-index:1051; width:48px; height:48px;">
+            <svg width="32" height="32" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect y="3" width="16" height="2" rx="1" fill="#333"/>
+                <rect y="7" width="16" height="2" rx="1" fill="#333"/>
+                <rect y="11" width="16" height="2" rx="1" fill="#333"/>
+            </svg>
         </button>
         <!-- Offcanvas-Menü für Mobilgeräte -->
         <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
@@ -151,9 +155,7 @@ HTML_TEMPLATE = '''
             </div>
         </form>
         {% if entries and is_mobile %}
-            <div class="d-flex justify-content-end mb-3">
-                <a href="/" class="btn btn-secondary btn-lg w-100">Fertig</a>
-            </div>
+            <!-- Kein Fertig-Button mehr -->
         {% endif %}
         {% if entries %}
             <h2 class="feed-title text-center">Feed: {{ feed_title }}</h2>
