@@ -180,10 +180,14 @@ HTML_TEMPLATE = '''
         <form method="get" class="mb-4 main-form-row" id="mainForm">
             <div class="input-group flex-column flex-sm-row">
                 <select class="form-select mb-2 mb-sm-0" id="favoriteSelect" name="favorite">
-                    <option value="">Favoriten auswählen...</option>
-                    {% for fav in favorites %}
-                        <option value="{{ fav }}" {% if url == fav %}selected{% endif %}>{{ fav }}</option>
-                    {% endfor %}
+                    {% if favorites|length == 0 %}
+                        <option value="">Keine Favoriten gespeichert</option>
+                    {% else %}
+                        <option value="">Favoriten auswählen...</option>
+                        {% for fav in favorites %}
+                            <option value="{{ fav }}" {% if url == fav %}selected{% endif %}>{{ fav }}</option>
+                        {% endfor %}
+                    {% endif %}
                 </select>
                 <input type="text" class="form-control mb-2 mb-sm-0" name="url" id="urlInput" placeholder="Feed-Adresse" value="{{ url }}" required style="min-width:0;">
                 <button class="btn btn-primary mb-2 mb-sm-0" type="submit">Feed laden</button>
