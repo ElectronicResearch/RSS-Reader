@@ -9,12 +9,15 @@ Dieses Projekt ist ein moderner RSS-Reader mit Web-Oberfläche, der RSS-Feeds ab
 
 ## Favoritenfunktion
 
-Ab sofort kannst du bis zu 5 RSS-Quellen als Favoriten speichern und bequem zwischen ihnen wechseln:
+Du kannst beliebig viele RSS-Quellen als Favoriten speichern und bequem zwischen ihnen wechseln:
 
-- Über das Dropdown-Menü kannst du gespeicherte Favoriten direkt auswählen und laden.
+- Über das Dropdown-Menü (Desktop) oder das Menü (Smartphone) kannst du gespeicherte Favoriten direkt auswählen und laden.
 - Mit dem Stern-Button neben dem URL-Feld kannst du die aktuelle Feed-URL als Favorit speichern oder wieder entfernen.
 - Die Favoriten werden dauerhaft in der Datei `favorites.json` gespeichert.
 - Die Favoritenfunktion benötigt keine zusätzlichen Python-Module.
+
+**Hinweis:**
+Die Anzahl der gespeicherten Favoriten ist nicht begrenzt. Auf schwächeren Systemen (z.B. Raspberry Pi) empfiehlt es sich jedoch, die Zahl der Favoriten moderat zu halten, da alle Favoriten-Feeds regelmäßig im Hintergrund aktualisiert werden. Viele parallele Feeds können die Systemleistung beeinflussen.
 
 **Tipp:** Die Favoriten sind sofort nach dem Hinzufügen/Entfernen im Dropdown-Menü verfügbar.
 
@@ -27,6 +30,12 @@ Ab sofort kannst du bis zu 5 RSS-Quellen als Favoriten speichern und bequem zwis
 - Die App erkennt mobile Geräte automatisch (User-Agent) und kann das Verhalten weiter anpassen.
 
 **Tipp:** Die App kann als Web-App zum Home-Bildschirm hinzugefügt werden und zeigt dann ein schönes RSS-Icon.
+
+## Neue Features (2025)
+
+- **Menü-Button:** Immer ganz oben rechts fixiert, auch auf Smartphones.
+- **Startbild:** Das Hintergrundbild wird auf der Startseite vollflächig und responsiv angezeigt.
+- **Favoriten-Feeds:** Werden alle 15 Minuten automatisch im Hintergrund aktualisiert und in der SQLite-Datenbank gespeichert. Dadurch sind die Feeds beim Öffnen sofort aktuell und das Laden geht blitzschnell.
 
 ## Installation und Betrieb auf einem Server (z.B. Raspberry Pi)
 
