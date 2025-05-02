@@ -95,16 +95,16 @@ HTML_TEMPLATE = '''
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="text-center mb-4">FeedSense</h1>
-        <!-- Hamburger-Button nur auf Mobilgeräten -->
-        <button class="d-block d-sm-none position-absolute end-0 mt-2 me-2 btn btn-light border" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu" style="z-index:1051; width:48px; height:48px;">
+    <div class="container position-relative">
+        <!-- Hamburger-Button ganz oben rechts -->
+        <button class="d-block d-sm-none position-absolute top-0 end-0 mt-2 me-2 btn btn-light border" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu" style="z-index:1051; width:48px; height:48px;">
             <svg width="32" height="32" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect y="3" width="16" height="2" rx="1" fill="#333"/>
                 <rect y="7" width="16" height="2" rx="1" fill="#333"/>
                 <rect y="11" width="16" height="2" rx="1" fill="#333"/>
             </svg>
         </button>
+        <h1 class="text-center mb-4">FeedSense</h1>
         <!-- Offcanvas-Menü für Mobilgeräte -->
         <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
           <div class="offcanvas-header">
@@ -121,11 +121,11 @@ HTML_TEMPLATE = '''
             <h6>Favoriten</h6>
             <ul class="list-group mb-3">
               {% for fav in favorites %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  <span style="word-break:break-all;">{{ fav }}</span>
-                  <span>
-                    <a href="/?url={{ fav }}" class="btn btn-sm btn-success me-1">Laden</a>
-                    <button type="button" class="btn btn-sm btn-danger" onclick="removeFavorite('{{ fav }}')">Entfernen</button>
+                <li class="list-group-item d-flex justify-content-between align-items-center py-2 px-1">
+                  <span style="word-break:break-all; font-size:0.97em;">{{ fav }}</span>
+                  <span class="d-flex gap-1">
+                    <a href="/?url={{ fav }}" class="btn btn-sm btn-success px-2 py-1">&#x2714;</a>
+                    <button type="button" class="btn btn-sm btn-danger px-2 py-1" onclick="removeFavorite('{{ fav }}')">&#x2716;</button>
                   </span>
                 </li>
               {% else %}
@@ -154,8 +154,10 @@ HTML_TEMPLATE = '''
                 </button>
             </div>
         </form>
-        {% if entries and is_mobile %}
-            <!-- Kein Fertig-Button mehr -->
+        {% if not entries and not url %}
+            <div class="d-flex justify-content-center align-items-center" style="min-height: 50vh;">
+                <img src="/static/FeedSense_HB.png" alt="FeedSense" class="img-fluid" style="max-width: 90vw; max-height: 60vh; opacity: 0.85;">
+            </div>
         {% endif %}
         {% if entries %}
             <h2 class="feed-title text-center">Feed: {{ feed_title }}</h2>
