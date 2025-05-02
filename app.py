@@ -72,7 +72,24 @@ HTML_TEMPLATE = '''
             h1 { font-size: 1.2rem; }
             .feed-title { font-size: 1rem; margin-top: 0.7rem; margin-bottom: 0.7rem; }
             .feed-item h3 { font-size: 0.98rem; }
+            .container { padding: 0 2px; }
+            .feed-item { flex-direction: column; align-items: stretch; padding: 1rem; gap: 0.7rem; }
+            .feed-item-img { width: 100%; height: 120px; margin-bottom: 0.5rem; }
+            .input-group > * { font-size: 1rem; }
+            .btn, .form-control, .form-select { min-height: 48px; font-size: 1.05rem; }
+            .favorite-btn { min-width: 44px; }
+            .footer { font-size: 0.9em; }
         }
+        /* Extra: Floating Action Button für mobile Geräte */
+        {% if is_mobile %}
+        #scrollTopBtn {
+            bottom: 80px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            font-size: 2rem;
+        }
+        {% endif %}
     </style>
 </head>
 <body>
@@ -231,6 +248,12 @@ def index():
     feed_title = ''
     favorites = load_favorites()
     
+    # User-Agent-Erkennung für mobile Geräte
+    user_agent = request.headers.get('User-Agent', '').lower()
+    is_mobile = False
+    if any(m in user_agent for m in ['iphone', 'android', 'ipad', 'mobile', 'windows phone']):
+        is_mobile = True
+    
     if url:
         try:
             feed = feedparser.parse(url)
@@ -251,7 +274,8 @@ def index():
         entries=entries, 
         url=url, 
         feed_title=feed_title,
-        favorites=favorites
+        favorites=favorites,
+        is_mobile=is_mobile
     )
 
 @app.route('/toggle_favorite', methods=['POST'])
