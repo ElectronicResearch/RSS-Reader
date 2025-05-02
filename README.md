@@ -18,6 +18,16 @@ Ab sofort kannst du bis zu 5 RSS-Quellen als Favoriten speichern und bequem zwis
 
 **Tipp:** Die Favoriten sind sofort nach dem Hinzufügen/Entfernen im Dropdown-Menü verfügbar.
 
+## Mobile Optimierung
+
+- Das Layout passt sich automatisch an Smartphones und Tablets an (responsive Design).
+- Buttons und Eingabefelder sind auf Touch-Bedienung optimiert.
+- Die Darstellung ist kompakter und moderner auf kleinen Bildschirmen.
+- Ein Floating-Button zum schnellen Scrollen erscheint auf Mobilgeräten.
+- Die App erkennt mobile Geräte automatisch (User-Agent) und kann das Verhalten weiter anpassen.
+
+**Tipp:** Die App kann als Web-App zum Home-Bildschirm hinzugefügt werden und zeigt dann ein schönes RSS-Icon.
+
 ## Installation und Betrieb auf einem Server (z.B. Raspberry Pi)
 
 ### Voraussetzungen
