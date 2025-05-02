@@ -155,6 +155,3 @@ Jetzt startet der RSS-Reader automatisch bei jedem Neustart des Raspberry Pi bzw
 MIT 
 
 &copy; M. Koznjak 2025
-
-**Hinweis:**
-Das Modul `requests`
