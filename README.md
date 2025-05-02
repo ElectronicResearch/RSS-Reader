@@ -37,6 +37,24 @@ Die Anzahl der gespeicherten Favoriten ist nicht begrenzt. Auf schwächeren Syst
 - **Startbild:** Das Hintergrundbild wird auf der Startseite vollflächig und responsiv angezeigt.
 - **Favoriten-Feeds:** Werden alle 15 Minuten automatisch im Hintergrund aktualisiert und in der SQLite-Datenbank gespeichert. Dadurch sind die Feeds beim Öffnen sofort aktuell und das Laden geht blitzschnell.
 
+### Neues UI-Layout (2025)
+
+- **Favoriten-Auswahl:** Links oben befindet sich jetzt ein Favoriten-Dropdown mit einem goldenen Stern-Icon (★) als Hinweis. So ist sofort klar, dass es sich um die Favoriten handelt.
+- **Feed-Adresse:** Rechts daneben befindet sich das Eingabefeld für die Feed-Adresse sowie der "Laden"-Button. Die Adresse kann unabhängig von den Favoriten eingegeben werden.
+- **Menü-Button:** Der Hamburger-Menü-Button ist immer oben rechts sichtbar – auf Desktop und Mobilgeräten.
+- **Vereinfachte Bedienung:** Die Buttons "Feed laden" und "Favorisieren" im Desktop-Formular wurden entfernt. Die Bedienung erfolgt jetzt über das neue, aufgeräumte Layout.
+- **Responsives Design:** Auf Mobilgeräten werden Favoriten-Auswahl und Feed-Eingabe automatisch untereinander dargestellt.
+
+## Hinweis zu Updates und Cache (PWA/Startseite)
+
+Wenn nach einem Update die Startseite oder die PWA ("Zum Startbildschirm hinzufügen") nicht korrekt angezeigt wird, liegt das meist am Browser- oder App-Cache. In diesem Fall:
+
+- Die App/Seite im Browser komplett schließen (auch aus dem App-Switcher entfernen).
+- In den Browser-Einstellungen unter "Website-Daten" oder "App-Daten" die gespeicherte PWA/Seite löschen.
+- Danach die Seite neu öffnen – jetzt wird alles frisch geladen.
+
+Durch die eingebauten Cache-Busting-Parameter an CSS und Manifest werden neue Versionen normalerweise sofort geladen. Bei PWAs kann es trotzdem nötig sein, die App-Daten einmalig zu löschen.
+
 ## Installation und Betrieb auf einem Server (z.B. Raspberry Pi)
 
 ### Voraussetzungen

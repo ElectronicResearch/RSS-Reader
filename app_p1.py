@@ -111,10 +111,7 @@ HTML_TEMPLATE = '''
             background: url('/static/FeedSense_HB.png') no-repeat center center fixed;
             background-size: cover;
             z-index: 0;
-            opacity: 1;
-            pointer-events: none;
         }
-        .container, .footer { position: relative; z-index: 1; }
         @media (max-width: 600px) {
             h1 { font-size: 1.2rem; }
             .feed-title { font-size: 1rem; margin-top: 0.7rem; margin-bottom: 0.7rem; }
@@ -135,7 +132,7 @@ HTML_TEMPLATE = '''
 <body>
     <div class="container position-relative">
         <!-- Hamburger-Button ganz oben rechts -->
-        <button class="menu-fix-top btn btn-light border" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu" style="width:48px; height:48px;">
+        <button class="d-block d-sm-none menu-fix-top btn btn-light border" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu" style="width:48px; height:48px;">
             <svg width="32" height="32" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect y="3" width="16" height="2" rx="1" fill="#333"/>
                 <rect y="7" width="16" height="2" rx="1" fill="#333"/>
@@ -181,24 +178,26 @@ HTML_TEMPLATE = '''
           </div>
         </div>
         <form method="get" class="mb-4 main-form-row" id="mainForm">
-            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-stretch gap-2">
-                <div class="flex-grow-1 d-flex align-items-center gap-2" style="max-width:320px;">
-                    <span style="font-size:1.25em;color:#f7b500;">&#9733;</span>
-                    <select class="form-select h-100" id="favoriteSelect" name="favorite">
-                        {% if favorites|length == 0 %}
-                            <option value="">Keine Favoriten gespeichert</option>
-                        {% else %}
-                            <option value="">Favoriten auswählen...</option>
-                            {% for fav in favorites %}
-                                <option value="{{ fav }}" {% if url == fav %}selected{% endif %}>{{ fav }}</option>
-                            {% endfor %}
-                        {% endif %}
-                    </select>
-                </div>
-                <div class="d-flex flex-row gap-2 flex-grow-1">
-                    <input type="text" class="form-control" name="url" id="urlInput" placeholder="Feed-Adresse" value="{{ url }}" required style="min-width:0;">
-                    <button class="btn btn-primary" type="submit">Laden</button>
-                </div>
+            <div class="input-group flex-column flex-sm-row">
+                <select class="form-select mb-2 mb-sm-0" id="favoriteSelect" name="favorite">
+                    {% if favorites|length == 0 %}
+                        <option value="">Keine Favoriten gespeichert</option>
+                    {% else %}
+                        <option value="">Favoriten auswählen...</option>
+                        {% for fav in favorites %}
+                            <option value="{{ fav }}" {% if url == fav %}selected{% endif %}>{{ fav }}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+                <input type="text" class="form-control mb-2 mb-sm-0" name="url" id="urlInput" placeholder="Feed-Adresse" value="{{ url }}" required style="min-width:0;">
+                <button class="btn btn-primary mb-2 mb-sm-0" type="submit">Feed laden</button>
+                <button type="button" class="btn btn-outline-primary favorite-btn mb-2 mb-sm-0" onclick="toggleFavorite()">
+                    {% if url in favorites %}
+                        ★ Entfernen
+                    {% else %}
+                        ☆ Favorisieren
+                    {% endif %}
+                </button>
             </div>
         </form>
         {% if not entries and not url %}
@@ -387,7 +386,7 @@ def index():
     if url:
         session = SessionLocal()
         # 1. Einträge aus DB (nur letzte 2 Tage)
-        two_days_ago = datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=2)
+        two_days_ago = datetime.datetime.utcnow() - datetime.timedelta(days=2)
         db_entries = session.query(Entry).filter(Entry.feed_url == url, Entry.published >= two_days_ago).order_by(Entry.published.desc()).all()
         entries = [
             {
@@ -404,21 +403,21 @@ def index():
             # Feed-Titel ggf. speichern
             db_feed = session.query(Feed).filter_by(url=url).first()
             if not db_feed:
-                db_feed = Feed(url=url, title=feed_title, last_fetch=datetime.datetime.now(datetime.UTC))
+                db_feed = Feed(url=url, title=feed_title, last_fetch=datetime.datetime.utcnow())
                 session.add(db_feed)
             else:
                 db_feed.title = feed_title
-                db_feed.last_fetch = datetime.datetime.now(datetime.UTC)
+                db_feed.last_fetch = datetime.datetime.utcnow()
             # Neue Einträge speichern
             for entry in feed.entries:
                 # Publikationsdatum bestimmen
                 published = None
                 if 'published_parsed' in entry and entry.published_parsed:
-                    published = datetime.datetime.fromtimestamp(time.mktime(entry.published_parsed), datetime.UTC)
+                    published = datetime.datetime.utcfromtimestamp(time.mktime(entry.published_parsed))
                 elif 'updated_parsed' in entry and entry.updated_parsed:
-                    published = datetime.datetime.fromtimestamp(time.mktime(entry.updated_parsed), datetime.UTC)
+                    published = datetime.datetime.utcfromtimestamp(time.mktime(entry.updated_parsed))
                 else:
-                    published = datetime.datetime.now(datetime.UTC)
+                    published = datetime.datetime.utcnow()
                 # Nur neue Einträge speichern
                 exists = session.query(Entry).filter_by(feed_url=url, link=entry.get('link', '#')).first()
                 if not exists and published >= two_days_ago:
@@ -479,26 +478,26 @@ def background_favorites_updater():
         session = SessionLocal()
         try:
             favorites = load_favorites()
-            two_days_ago = datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=2)
+            two_days_ago = datetime.datetime.utcnow() - datetime.timedelta(days=2)
             for url in favorites:
                 try:
                     feed = feedparser.parse(url)
                     feed_title = feed.feed.get('title', 'Feed')
                     db_feed = session.query(Feed).filter_by(url=url).first()
                     if not db_feed:
-                        db_feed = Feed(url=url, title=feed_title, last_fetch=datetime.datetime.now(datetime.UTC))
+                        db_feed = Feed(url=url, title=feed_title, last_fetch=datetime.datetime.utcnow())
                         session.add(db_feed)
                     else:
                         db_feed.title = feed_title
-                        db_feed.last_fetch = datetime.datetime.now(datetime.UTC)
+                        db_feed.last_fetch = datetime.datetime.utcnow()
                     for entry in feed.entries:
                         published = None
                         if 'published_parsed' in entry and entry.published_parsed:
-                            published = datetime.datetime.fromtimestamp(time.mktime(entry.published_parsed), datetime.UTC)
+                            published = datetime.datetime.utcfromtimestamp(time.mktime(entry.published_parsed))
                         elif 'updated_parsed' in entry and entry.updated_parsed:
-                            published = datetime.datetime.fromtimestamp(time.mktime(entry.updated_parsed), datetime.UTC)
+                            published = datetime.datetime.utcfromtimestamp(time.mktime(entry.updated_parsed))
                         else:
-                            published = datetime.datetime.now(datetime.UTC)
+                            published = datetime.datetime.utcnow()
                         exists = session.query(Entry).filter_by(feed_url=url, link=entry.get('link', '#')).first()
                         if not exists and published >= two_days_ago:
                             summary = summarize(entry.get('summary', entry.get('description', '')))
@@ -522,5 +521,6 @@ def background_favorites_updater():
 # Thread beim Starten der App starten
 threading.Thread(target=background_favorites_updater, daemon=True).start()
 
+
 if __name__ == '__main__':
-    app.run(debug=True) 
+    app.run(host='0.0.0.0', port=5000, debug=True)

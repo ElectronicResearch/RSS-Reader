@@ -1,5 +1,4 @@
 flask
 feedparser
 beautifulsoup4
-requests
-sqlalchemy 
+requests 
