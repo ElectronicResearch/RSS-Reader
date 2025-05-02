@@ -10,6 +10,8 @@ import os
 from sqlalchemy import create_engine, Column, String, Text, DateTime, Integer, ForeignKey
 from sqlalchemy.orm import declarative_base, sessionmaker
 import datetime
+import threading
+import time as pytime
 
 app = Flask(__name__)
 
@@ -94,6 +96,14 @@ HTML_TEMPLATE = '''
         .favorite-btn {
             margin-left: 10px;
         }
+        /* Menü-Button fixiert ganz oben rechts */
+        .menu-fix-top {
+            position: fixed !important;
+            top: 0;
+            right: 0;
+            z-index: 2000;
+            margin: 12px 12px 0 0;
+        }
         @media (max-width: 600px) {
             h1 { font-size: 1.2rem; }
             .feed-title { font-size: 1rem; margin-top: 0.7rem; margin-bottom: 0.7rem; }
@@ -107,23 +117,24 @@ HTML_TEMPLATE = '''
             .favorite-btn { min-width: 44px; }
             .footer { font-size: 0.9em; }
             .main-form-row { display: none !important; }
+            /* Hintergrundbild vollflächig */
+            body, html {
+                height: 100%;
+            }
+            .start-bg {
+                position: fixed;
+                top: 0; left: 0; width: 100vw; height: 100vh;
+                background: url('/static/FeedSense_HB.png') no-repeat center center fixed;
+                background-size: cover;
+                z-index: 0;
+            }
         }
-        /* Extra: Floating Action Button für mobile Geräte */
-        {% if is_mobile %}
-        #scrollTopBtn {
-            bottom: 80px;
-            right: 20px;
-            width: 56px;
-            height: 56px;
-            font-size: 2rem;
-        }
-        {% endif %}
     </style>
 </head>
 <body>
     <div class="container position-relative">
         <!-- Hamburger-Button ganz oben rechts -->
-        <button class="d-block d-sm-none position-absolute top-0 end-0 mt-2 me-2 btn btn-light border" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu" style="z-index:1051; width:48px; height:48px;">
+        <button class="d-block d-sm-none menu-fix-top btn btn-light border" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu" style="width:48px; height:48px;">
             <svg width="32" height="32" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect y="3" width="16" height="2" rx="1" fill="#333"/>
                 <rect y="7" width="16" height="2" rx="1" fill="#333"/>
@@ -181,9 +192,7 @@ HTML_TEMPLATE = '''
             </div>
         </form>
         {% if not entries and not url %}
-            <div class="d-flex justify-content-center align-items-center" style="min-height: 50vh;">
-                <img src="/static/FeedSense_HB.png" alt="FeedSense" class="img-fluid" style="max-width: 90vw; max-height: 60vh; opacity: 0.85;">
-            </div>
+            <div class="start-bg"></div>
         {% endif %}
         {% if entries %}
             <h2 class="feed-title text-center">Feed: {{ feed_title }}</h2>
@@ -420,6 +429,54 @@ def toggle_favorite():
     
     save_favorites(favorites)
     return jsonify({'success': True})
+
+def background_favorites_updater():
+    while True:
+        session = SessionLocal()
+        try:
+            favorites = load_favorites()
+            two_days_ago = datetime.datetime.utcnow() - datetime.timedelta(days=2)
+            for url in favorites:
+                try:
+                    feed = feedparser.parse(url)
+                    feed_title = feed.feed.get('title', 'Feed')
+                    db_feed = session.query(Feed).filter_by(url=url).first()
+                    if not db_feed:
+                        db_feed = Feed(url=url, title=feed_title, last_fetch=datetime.datetime.utcnow())
+                        session.add(db_feed)
+                    else:
+                        db_feed.title = feed_title
+                        db_feed.last_fetch = datetime.datetime.utcnow()
+                    for entry in feed.entries:
+                        published = None
+                        if 'published_parsed' in entry and entry.published_parsed:
+                            published = datetime.datetime.utcfromtimestamp(time.mktime(entry.published_parsed))
+                        elif 'updated_parsed' in entry and entry.updated_parsed:
+                            published = datetime.datetime.utcfromtimestamp(time.mktime(entry.updated_parsed))
+                        else:
+                            published = datetime.datetime.utcnow()
+                        exists = session.query(Entry).filter_by(feed_url=url, link=entry.get('link', '#')).first()
+                        if not exists and published >= two_days_ago:
+                            summary = summarize(entry.get('summary', entry.get('description', '')))
+                            image = extract_image(entry)
+                            session.add(Entry(
+                                feed_url=url,
+                                title=entry.get('title', 'Kein Titel'),
+                                link=entry.get('link', '#'),
+                                summary=summary,
+                                image=image,
+                                published=published
+                            ))
+                    session.query(Entry).filter(Entry.feed_url == url, Entry.published < two_days_ago).delete()
+                    session.commit()
+                except Exception as e:
+                    pass
+        finally:
+            session.close()
+        pytime.sleep(900)  # 15 Minuten
+
+# Thread beim Starten der App starten
+threading.Thread(target=background_favorites_updater, daemon=True).start()
 
 if __name__ == '__main__':
     app.run(debug=True) 
