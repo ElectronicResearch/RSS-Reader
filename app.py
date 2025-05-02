@@ -80,6 +80,7 @@ HTML_TEMPLATE = '''
             .btn, .form-control, .form-select { min-height: 44px; font-size: 1.05rem; }
             .favorite-btn { min-width: 44px; }
             .footer { font-size: 0.9em; }
+            .main-form-row { display: none !important; }
         }
         /* Extra: Floating Action Button für mobile Geräte */
         {% if is_mobile %}
@@ -96,7 +97,41 @@ HTML_TEMPLATE = '''
 <body>
     <div class="container">
         <h1 class="text-center mb-4">FeedSense</h1>
-        <form method="get" class="mb-4">
+        <!-- Hamburger-Button nur auf Mobilgeräten -->
+        <button class="navbar-toggler d-block d-sm-none position-absolute end-0 mt-2 me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu" style="z-index:1051;">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- Offcanvas-Menü für Mobilgeräte -->
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="mobileMenuLabel">FeedSense Menü</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <form method="get" class="mb-3">
+              <div class="input-group">
+                <input type="text" class="form-control" name="url" placeholder="Feed-Adresse" required>
+                <button class="btn btn-primary" type="submit">Feed laden</button>
+              </div>
+            </form>
+            <h6>Favoriten</h6>
+            <ul class="list-group mb-3">
+              {% for fav in favorites %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <span style="word-break:break-all;">{{ fav }}</span>
+                  <span>
+                    <a href="/?url={{ fav }}" class="btn btn-sm btn-success me-1">Laden</a>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="removeFavorite('{{ fav }}')">Entfernen</button>
+                  </span>
+                </li>
+              {% else %}
+                <li class="list-group-item text-muted">Keine Favoriten</li>
+              {% endfor %}
+            </ul>
+            <a href="/" class="btn btn-outline-secondary w-100">Zur Startseite</a>
+          </div>
+        </div>
+        <form method="get" class="mb-4 main-form-row">
             <div class="input-group flex-column flex-sm-row">
                 <select class="form-select mb-2 mb-sm-0" id="favoriteSelect" onchange="loadFavorite()">
                     <option value="">Favoriten auswählen...</option>
@@ -181,6 +216,14 @@ HTML_TEMPLATE = '''
                     location.reload();
                 }
             });
+        }
+
+        function removeFavorite(fav) {
+            fetch('/toggle_favorite', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({url: fav})
+            }).then(r => r.json()).then(data => { if(data.success) location.reload(); });
         }
     </script>
 </body>
