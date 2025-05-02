@@ -140,6 +140,15 @@ HTML_TEMPLATE = '''
             .main-form-row { display: none !important; }
             /* .start-bg bleibt auch auf Desktop aktiv */
         }
+        /* Kompakte Buttons und Felder im mobilen Offcanvas-Menü (muss nach der Media Query stehen!) */
+        #mobileMenu .btn, #mobileMenu .form-control, #mobileMenu .form-select {
+            min-height: 36px !important;
+            font-size: 1em !important;
+            padding: 0.25rem 0.75rem !important;
+        }
+        #mobileMenu .favorite-btn {
+            min-width: 36px !important;
+        }
     </style>
 </head>
 <body>
@@ -161,11 +170,15 @@ HTML_TEMPLATE = '''
           </div>
           <div class="offcanvas-body">
             <form method="get" class="mb-3">
-              <div class="input-group gap-2">
-                <input type="text" class="form-control" name="url" id="mobileUrlInput" placeholder="Feed-Adresse" required>
-                <button class="btn btn-primary btn-sm" type="submit">Laden</button>
-                <button type="button" class="btn btn-outline-primary btn-sm favorite-btn" style="font-size:1.25em;" onclick="toggleFavoriteMobile()">
-                    {% if url in favorites %}★{% else %}☆{% endif %}
+              <div class="d-flex flex-row align-items-center gap-2" style="width:100%;">
+                <input type="text" class="form-control" name="url" id="mobileUrlInput" placeholder="Feed-Adresse" required
+                  style="min-height:32px !important; font-size:1em !important; padding:0.2rem 0.5rem !important; flex:1 1 0;">
+                <button class="btn btn-primary btn-sm" type="submit"
+                  style="min-height:32px !important; font-size:1em !important; padding:0.2rem 0.7rem !important; flex:0 0 auto;">Laden</button>
+                <button type="button" class="btn btn-outline-primary btn-sm favorite-btn"
+                  style="font-size:1.15em; min-height:32px !important; min-width:32px !important; padding:0.2rem 0.5rem !important; flex:0 0 auto;"
+                  onclick="toggleFavoriteMobile()">
+                  {% if url in favorites %}★{% else %}☆{% endif %}
                 </button>
               </div>
             </form>
