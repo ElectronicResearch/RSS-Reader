@@ -1,6 +1,6 @@
-# FeedSense & Zusammenfasser
+# FeedSense
 
-Dieses Projekt ist ein moderner RSS-Reader mit Web-Oberfläche, der RSS-Feeds abruft, zusammenfasst und im Browser anzeigt.
+Dieses Projekt ist ein moderner RSS-Reader mit Web-Oberfläche, der RSS-Feeds abruft und im Browser anzeigt.
 
 ## Funktionen
 - RSS-Feeds per URL abrufen

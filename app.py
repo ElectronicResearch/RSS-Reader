@@ -29,7 +29,7 @@ HTML_TEMPLATE = '''
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>FeedSense & Zusammenfasser</title>
+    <title>FeedSense</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="manifest" href="/static/manifest.json">
     <link rel="icon" type="image/png" sizes="192x192" href="/static/icon-192.png">
@@ -94,7 +94,7 @@ HTML_TEMPLATE = '''
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center mb-4">FeedSense & Zusammenfasser</h1>
+        <h1 class="text-center mb-4">FeedSense</h1>
         <form method="get" class="mb-4">
             <div class="input-group">
                 <select class="form-select" id="favoriteSelect" onchange="loadFavorite()">
