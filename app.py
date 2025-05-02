@@ -12,6 +12,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 import datetime
 import threading
 import time as pytime
+from datetime import timezone
 
 app = Flask(__name__)
 
@@ -387,7 +388,7 @@ def index():
     if url:
         session = SessionLocal()
         # 1. Einträge aus DB (nur letzte 2 Tage)
-        two_days_ago = datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=2)
+        two_days_ago = datetime.datetime.now(timezone.utc) - datetime.timedelta(days=2)
         db_entries = session.query(Entry).filter(Entry.feed_url == url, Entry.published >= two_days_ago).order_by(Entry.published.desc()).all()
         entries = [
             {
@@ -404,21 +405,21 @@ def index():
             # Feed-Titel ggf. speichern
             db_feed = session.query(Feed).filter_by(url=url).first()
             if not db_feed:
-                db_feed = Feed(url=url, title=feed_title, last_fetch=datetime.datetime.now(datetime.UTC))
+                db_feed = Feed(url=url, title=feed_title, last_fetch=datetime.datetime.now(timezone.utc))
                 session.add(db_feed)
             else:
                 db_feed.title = feed_title
-                db_feed.last_fetch = datetime.datetime.now(datetime.UTC)
+                db_feed.last_fetch = datetime.datetime.now(timezone.utc)
             # Neue Einträge speichern
             for entry in feed.entries:
                 # Publikationsdatum bestimmen
                 published = None
                 if 'published_parsed' in entry and entry.published_parsed:
-                    published = datetime.datetime.fromtimestamp(time.mktime(entry.published_parsed), datetime.UTC)
+                    published = datetime.datetime.fromtimestamp(time.mktime(entry.published_parsed), timezone.utc)
                 elif 'updated_parsed' in entry and entry.updated_parsed:
-                    published = datetime.datetime.fromtimestamp(time.mktime(entry.updated_parsed), datetime.UTC)
+                    published = datetime.datetime.fromtimestamp(time.mktime(entry.updated_parsed), timezone.utc)
                 else:
-                    published = datetime.datetime.now(datetime.UTC)
+                    published = datetime.datetime.now(timezone.utc)
                 # Nur neue Einträge speichern
                 exists = session.query(Entry).filter_by(feed_url=url, link=entry.get('link', '#')).first()
                 if not exists and published >= two_days_ago:
@@ -479,26 +480,26 @@ def background_favorites_updater():
         session = SessionLocal()
         try:
             favorites = load_favorites()
-            two_days_ago = datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=2)
+            two_days_ago = datetime.datetime.now(timezone.utc) - datetime.timedelta(days=2)
             for url in favorites:
                 try:
                     feed = feedparser.parse(url)
                     feed_title = feed.feed.get('title', 'Feed')
                     db_feed = session.query(Feed).filter_by(url=url).first()
                     if not db_feed:
-                        db_feed = Feed(url=url, title=feed_title, last_fetch=datetime.datetime.now(datetime.UTC))
+                        db_feed = Feed(url=url, title=feed_title, last_fetch=datetime.datetime.now(timezone.utc))
                         session.add(db_feed)
                     else:
                         db_feed.title = feed_title
-                        db_feed.last_fetch = datetime.datetime.now(datetime.UTC)
+                        db_feed.last_fetch = datetime.datetime.now(timezone.utc)
                     for entry in feed.entries:
                         published = None
                         if 'published_parsed' in entry and entry.published_parsed:
-                            published = datetime.datetime.fromtimestamp(time.mktime(entry.published_parsed), datetime.UTC)
+                            published = datetime.datetime.fromtimestamp(time.mktime(entry.published_parsed), timezone.utc)
                         elif 'updated_parsed' in entry and entry.updated_parsed:
-                            published = datetime.datetime.fromtimestamp(time.mktime(entry.updated_parsed), datetime.UTC)
+                            published = datetime.datetime.fromtimestamp(time.mktime(entry.updated_parsed), timezone.utc)
                         else:
-                            published = datetime.datetime.now(datetime.UTC)
+                            published = datetime.datetime.now(timezone.utc)
                         exists = session.query(Entry).filter_by(feed_url=url, link=entry.get('link', '#')).first()
                         if not exists and published >= two_days_ago:
                             summary = summarize(entry.get('summary', entry.get('description', '')))
