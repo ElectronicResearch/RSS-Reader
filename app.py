@@ -105,6 +105,13 @@ HTML_TEMPLATE = '''
             z-index: 2000;
             margin: 12px 12px 0 0;
         }
+        .start-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: url('/static/FeedSense_HB.png') no-repeat center center fixed;
+            background-size: cover;
+            z-index: 0;
+        }
         @media (max-width: 600px) {
             h1 { font-size: 1.2rem; }
             .feed-title { font-size: 1rem; margin-top: 0.7rem; margin-bottom: 0.7rem; }
@@ -118,17 +125,7 @@ HTML_TEMPLATE = '''
             .favorite-btn { min-width: 44px; }
             .footer { font-size: 0.9em; }
             .main-form-row { display: none !important; }
-            /* Hintergrundbild vollflächig */
-            body, html {
-                height: 100%;
-            }
-            .start-bg {
-                position: fixed;
-                top: 0; left: 0; width: 100vw; height: 100vh;
-                background: url('/static/FeedSense_HB.png') no-repeat center center fixed;
-                background-size: cover;
-                z-index: 0;
-            }
+            /* .start-bg bleibt auch auf Desktop aktiv */
         }
     </style>
 </head>
@@ -173,9 +170,9 @@ HTML_TEMPLATE = '''
             <a href="/" class="btn btn-outline-secondary w-100">Zur Startseite</a>
           </div>
         </div>
-        <form method="get" class="mb-4 main-form-row">
+        <form method="get" class="mb-4 main-form-row" id="mainForm">
             <div class="input-group flex-column flex-sm-row">
-                <select class="form-select mb-2 mb-sm-0" id="favoriteSelect" onchange="loadFavorite()">
+                <select class="form-select mb-2 mb-sm-0" id="favoriteSelect">
                     <option value="">Favoriten auswählen...</option>
                     {% for fav in favorites %}
                         <option value="{{ fav }}" {% if url == fav %}selected{% endif %}>{{ fav }}</option>
@@ -212,7 +209,7 @@ HTML_TEMPLATE = '''
         {% elif url %}
             <div class="alert alert-warning text-center">Kein Feed gefunden oder ungültige URL.</div>
         {% endif %}
-        <div class="footer">
+        <div class="footer" style="position:relative; z-index:2;">
             <hr>
             <span>FeedSense &copy; M. Koznjak 2025</span>
         </div>
@@ -238,7 +235,7 @@ HTML_TEMPLATE = '''
             const urlInput = document.getElementById('urlInput');
             if (select.value) {
                 urlInput.value = select.value;
-                document.querySelector('form').submit();
+                document.getElementById('mainForm').submit();
             }
         }
 
@@ -268,6 +265,8 @@ HTML_TEMPLATE = '''
                 body: JSON.stringify({url: fav})
             }).then(r => r.json()).then(data => { if(data.success) location.reload(); });
         }
+
+        document.getElementById('favoriteSelect').addEventListener('change', loadFavorite);
     </script>
 </body>
 </html>
