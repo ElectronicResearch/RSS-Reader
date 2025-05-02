@@ -7,8 +7,34 @@ from bs4 import BeautifulSoup
 import time
 import json
 import os
+from sqlalchemy import create_engine, Column, String, Text, DateTime, Integer, ForeignKey
+from sqlalchemy.orm import declarative_base, sessionmaker
+import datetime
 
 app = Flask(__name__)
+
+# SQLite-Datenbank einrichten
+engine = create_engine('sqlite:///feedsense.db', echo=False)
+Base = declarative_base()
+SessionLocal = sessionmaker(bind=engine)
+
+class Feed(Base):
+    __tablename__ = 'feeds'
+    url = Column(String, primary_key=True)
+    title = Column(String)
+    last_fetch = Column(DateTime)
+
+class Entry(Base):
+    __tablename__ = 'entries'
+    id = Column(Integer, primary_key=True)
+    feed_url = Column(String, ForeignKey('feeds.url'))
+    title = Column(String)
+    link = Column(String)
+    summary = Column(Text)
+    image = Column(String)
+    published = Column(DateTime)
+
+Base.metadata.create_all(engine)
 
 # Laden der Favoriten
 def load_favorites():
@@ -300,29 +326,77 @@ def index():
     entries = []
     feed_title = ''
     favorites = load_favorites()
-    
-    # User-Agent-Erkennung für mobile Geräte
     user_agent = request.headers.get('User-Agent', '').lower()
     is_mobile = False
     if any(m in user_agent for m in ['iphone', 'android', 'ipad', 'mobile', 'windows phone']):
         is_mobile = True
-    
+
     if url:
+        session = SessionLocal()
+        # 1. Einträge aus DB (nur letzte 2 Tage)
+        two_days_ago = datetime.datetime.utcnow() - datetime.timedelta(days=2)
+        db_entries = session.query(Entry).filter(Entry.feed_url == url, Entry.published >= two_days_ago).order_by(Entry.published.desc()).all()
+        entries = [
+            {
+                'title': e.title,
+                'link': e.link,
+                'summary': e.summary,
+                'image': e.image
+            } for e in db_entries
+        ]
+        # 2. Feed online laden
         try:
             feed = feedparser.parse(url)
             feed_title = feed.feed.get('title', 'Feed')
+            # Feed-Titel ggf. speichern
+            db_feed = session.query(Feed).filter_by(url=url).first()
+            if not db_feed:
+                db_feed = Feed(url=url, title=feed_title, last_fetch=datetime.datetime.utcnow())
+                session.add(db_feed)
+            else:
+                db_feed.title = feed_title
+                db_feed.last_fetch = datetime.datetime.utcnow()
+            # Neue Einträge speichern
             for entry in feed.entries:
-                summary = summarize(entry.get('summary', entry.get('description', '')))
-                image = extract_image(entry)
-                entries.append({
-                    'title': entry.get('title', 'Kein Titel'),
-                    'link': entry.get('link', '#'),
-                    'summary': summary,
-                    'image': image
-                })
+                # Publikationsdatum bestimmen
+                published = None
+                if 'published_parsed' in entry and entry.published_parsed:
+                    published = datetime.datetime.utcfromtimestamp(time.mktime(entry.published_parsed))
+                elif 'updated_parsed' in entry and entry.updated_parsed:
+                    published = datetime.datetime.utcfromtimestamp(time.mktime(entry.updated_parsed))
+                else:
+                    published = datetime.datetime.utcnow()
+                # Nur neue Einträge speichern
+                exists = session.query(Entry).filter_by(feed_url=url, link=entry.get('link', '#')).first()
+                if not exists and published >= two_days_ago:
+                    summary = summarize(entry.get('summary', entry.get('description', '')))
+                    image = extract_image(entry)
+                    session.add(Entry(
+                        feed_url=url,
+                        title=entry.get('title', 'Kein Titel'),
+                        link=entry.get('link', '#'),
+                        summary=summary,
+                        image=image,
+                        published=published
+                    ))
+            # Alte Einträge löschen
+            session.query(Entry).filter(Entry.feed_url == url, Entry.published < two_days_ago).delete()
+            session.commit()
+            # Nach dem Online-Update erneut aus DB laden
+            db_entries = session.query(Entry).filter(Entry.feed_url == url, Entry.published >= two_days_ago).order_by(Entry.published.desc()).all()
+            entries = [
+                {
+                    'title': e.title,
+                    'link': e.link,
+                    'summary': e.summary,
+                    'image': e.image
+                } for e in db_entries
+            ]
         except Exception as e:
-            entries = []
-    
+            pass
+        finally:
+            session.close()
+
     return render_template_string(HTML_TEMPLATE, 
         entries=entries, 
         url=url, 

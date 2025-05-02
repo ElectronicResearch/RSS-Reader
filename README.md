@@ -155,3 +155,12 @@ Jetzt startet der RSS-Reader automatisch bei jedem Neustart des Raspberry Pi bzw
 MIT 
 
 &copy; M. Koznjak 2025
+
+## Feed-Caching mit SQLite
+
+FeedSense nutzt eine lokale SQLite-Datenbank, um RSS-Feeds und deren Einträge effizient zwischenzuspeichern:
+
+- Beim Laden eines Feeds werden zuerst die letzten 2 Tage aus der Datenbank angezeigt.
+- Neue Einträge werden automatisch ergänzt, alte (älter als 2 Tage) werden gelöscht.
+- Das sorgt für deutlich schnellere Ladezeiten, weniger Datenverbrauch und eine bessere Nutzererfahrung – auch bei großen Feeds.
+- Die Datenbankdatei heißt `feedsense.db` und wird automatisch im Projektverzeichnis angelegt.
