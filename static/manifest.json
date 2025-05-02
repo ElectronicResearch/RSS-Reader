@@ -1,6 +1,6 @@
 {
-  "name": "RSS Reader",
-  "short_name": "RSS Reader",
+  "name": "FeedSense",
+  "short_name": "FeedSense",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8f9fa",

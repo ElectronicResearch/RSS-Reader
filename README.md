@@ -1,6 +1,6 @@
-# RSS Reader & Zusammenfasser
+# FeedSense & Zusammenfasser
 
-Dieses Projekt ist ein einfacher RSS-Reader mit Web-Oberfläche, der RSS-Feeds abruft, zusammenfasst und im Browser anzeigt.
+Dieses Projekt ist ein moderner RSS-Reader mit Web-Oberfläche, der RSS-Feeds abruft, zusammenfasst und im Browser anzeigt.
 
 ## Funktionen
 - RSS-Feeds per URL abrufen
@@ -154,82 +154,7 @@ Jetzt startet der RSS-Reader automatisch bei jedem Neustart des Raspberry Pi bzw
 ## Lizenz
 MIT 
 
+&copy; M. Koznjak 2025
+
 **Hinweis:**
-Das Modul `requests` wird für die Anwendung benötigt und ist jetzt in der `requirements.txt` enthalten. Stelle sicher, dass du alle Abhängigkeiten mit folgendem Befehl installierst:
-
-```bash
-pip install -r requirements.txt
-```
-
-Falls du das Paket einzeln installieren möchtest:
-```bash
-pip install requests
-```
-
-## Fehlerbehebung (Troubleshooting)
-
-### Fehler: ImportError: No module named feedparser
-
-Dieser Fehler tritt auf, wenn das Modul `feedparser` nicht installiert ist.
-
-**Lösung:**
-- Stelle sicher, dass du alle Abhängigkeiten installiert hast:
-  ```bash
-  pip install -r requirements.txt
-  ```
-- Falls du eine virtuelle Umgebung verwendest, aktiviere sie vorher:
-  ```bash
-  source venv/bin/activate
-  ```
-- Alternativ kannst du das Modul einzeln installieren:
-  ```bash
-  pip install feedparser
-  ```
-
-Weitere Module wie `flask`, `requests` und `beautifulsoup4` werden ebenfalls benötigt und sind in der `requirements.txt` enthalten.
-
-### Fehler: Modul weiterhin nicht gefunden
-
-Falls trotz Installation das Modul weiterhin nicht gefunden wird, prüfe Folgendes:
-
-1. **Virtuelle Umgebung aktivieren (falls verwendet):**
-   ```bash
-   source venv/bin/activate
-   ```
-   Danach erneut installieren:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. **Richtiges Python und pip verwenden:**
-   Prüfe, ob du das Python und pip aus der venv nutzt:
-   ```bash
-   which python
-   which pip
-   ```
-   Beide Pfade sollten auf die virtuelle Umgebung zeigen (z.B. `/home/pi/RSS-Reader/venv/bin/python`).
-
-3. **Modul global installieren (wenn keine venv genutzt wird):**
-   ```bash
-   pip install feedparser
-   # oder, falls mehrere Python-Versionen installiert sind:
-   python3 -m pip install feedparser
-   ```
-
-4. **Installation überprüfen:**
-   ```bash
-   pip show feedparser
-   ```
-   Wenn keine Ausgabe erscheint, ist das Modul nicht installiert.
-
-5. **Programm starten:**
-   ```bash
-   python app.py
-   ```
-
-**Neu:**
-- Der Reader zeigt jetzt zu jedem Feed-Eintrag ein Vorschaubild an, sofern dieses im Feed vorhanden ist (z.B. als media:content, enclosure oder Bild im Text).
-- **Favoritenfunktion:** RSS-Quellen können als Favoriten gespeichert und über ein Dropdown-Menü schnell ausgewählt werden.
-
-**Tipp:**
-- Wenn im Feed kein Bild enthalten ist, versucht der Reader automatisch, ein Vorschaubild von der verlinkten Webseite (OpenGraph oder Twitter-Card) zu extrahieren. Dadurch werden auch bei vielen Nachrichten-Feeds passende Bilder angezeigt. Das Laden kann dadurch etwas langsamer werden. 
+Das Modul `requests`
