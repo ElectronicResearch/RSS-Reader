@@ -149,8 +149,15 @@ HTML_TEMPLATE = '''
           <div class="offcanvas-body">
             <form method="get" class="mb-3">
               <div class="input-group">
-                <input type="text" class="form-control" name="url" placeholder="Feed-Adresse" required>
+                <input type="text" class="form-control" name="url" id="mobileUrlInput" placeholder="Feed-Adresse" required>
                 <button class="btn btn-primary" type="submit">Feed laden</button>
+                <button type="button" class="btn btn-outline-primary favorite-btn ms-2" onclick="toggleFavoriteMobile()">
+                    {% if url in favorites %}
+                        ★
+                    {% else %}
+                        ☆
+                    {% endif %}
+                </button>
               </div>
             </form>
             <h6>Favoriten</h6>
@@ -209,10 +216,6 @@ HTML_TEMPLATE = '''
         {% elif url %}
             <div class="alert alert-warning text-center">Kein Feed gefunden oder ungültige URL.</div>
         {% endif %}
-        <div class="footer" style="position:relative; z-index:2;">
-            <hr>
-            <span>FeedSense &copy; M. Koznjak 2025</span>
-        </div>
     </div>
     <button onclick="scrollToTop()" id="scrollTopBtn" title="Nach oben">&#8679;</button>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -266,8 +269,30 @@ HTML_TEMPLATE = '''
             }).then(r => r.json()).then(data => { if(data.success) location.reload(); });
         }
 
+        function toggleFavoriteMobile() {
+            const url = document.getElementById('mobileUrlInput').value;
+            if (!url) return;
+            fetch('/toggle_favorite', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({url: url})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+        }
+
         document.getElementById('favoriteSelect').addEventListener('change', loadFavorite);
     </script>
+    <!-- Sticky Footer -->
+    <footer class="footer" style="position:fixed;left:0;bottom:0;width:100vw;background:rgba(248,249,250,0.95);text-align:center;color:#888;padding:0.7rem 0;z-index:3000;box-shadow:0 -2px 8px rgba(0,0,0,0.04);font-size:0.98em;">
+        <span>FeedSense &copy; M. Koznjak 2025</span>
+    </footer>
 </body>
 </html>
 '''
