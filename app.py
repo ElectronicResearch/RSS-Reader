@@ -37,9 +37,10 @@ HTML_TEMPLATE = '''
         .feed-item { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 1.5rem; }
         .feed-item-img { width: 120px; height: 80px; object-fit: cover; border-radius: 6px; flex-shrink: 0; background: #eee; }
         .feed-item-content { flex: 1; min-width: 0; }
-        .feed-item h3 { margin-top: 0; }
+        .feed-item h3 { margin-top: 0; font-size: 1.1rem; }
         .summary { color: #444; }
-        .feed-title { margin-top: 2rem; margin-bottom: 2rem; }
+        .feed-title { margin-top: 1.2rem; margin-bottom: 1.2rem; font-size: 1.25rem; }
+        h1 { font-size: 1.7rem; margin-bottom: 1.2rem; }
         .footer { text-align: center; color: #888; margin-top: 3rem; font-size: 0.95em; }
         #scrollTopBtn {
             display: none;
@@ -62,6 +63,11 @@ HTML_TEMPLATE = '''
         }
         .favorite-btn {
             margin-left: 10px;
+        }
+        @media (max-width: 600px) {
+            h1 { font-size: 1.2rem; }
+            .feed-title { font-size: 1rem; margin-top: 0.7rem; margin-bottom: 0.7rem; }
+            .feed-item h3 { font-size: 0.98rem; }
         }
     </style>
 </head>
