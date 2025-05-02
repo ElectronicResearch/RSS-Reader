@@ -195,7 +195,7 @@ HTML_TEMPLATE = '''
         {% if not entries and not url %}
             <div class="start-bg"></div>
             <div class="position-absolute top-50 start-50 translate-middle text-center" style="z-index:1; width:100vw;">
-                <h2 style="color:#222; font-weight:600; text-shadow:0 2px 8px #fff, 0 1px 0 #eee; font-size:2.1rem; letter-spacing:0.01em;">FeedSense liest mit – damit Sie es nicht müssen.</h2>
+                <h2 style="color:#fff; font-weight:600; text-shadow:0 2px 12px #222, 0 1px 0 #444; font-size:2.1rem; letter-spacing:0.01em;">FeedSense liest mit – damit Sie es nicht müssen.</h2>
             </div>
         {% endif %}
         {% if entries %}
